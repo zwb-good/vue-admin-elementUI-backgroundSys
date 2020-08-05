@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo1.dao.RoleMenuMapper" >
+  <resultMap id="BaseResultMap" type="com.example.demo1.pojo.RoleMenu" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="roleId" property="roleId" jdbcType="INTEGER" />
+    <result column="menuId" property="menuId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    select
+      id,
+      roleId,
+      menuId
+    from
+      rolemenu
+  </sql>
+  <select id="selectRoleMenu" resultMap="BaseResultMap" parameterType="com.example.demo1.pojo.RoleMenu" >
+    <include refid="Base_Column_List" />
+    <where>
+      1 = 1
+      <if test="id != null"> and id = #{id,jdbcType=INTEGER}</if>
+      <if test="roleId != null"> and roleId = #{roleId,jdbcType=INTEGER}</if>
+      <if test="menuId != null"> and menuId = #{menuId,jdbcType=INTEGER}</if>
+    </where>
+  </select>
+
+  <select id="roleMenuSelectExist" parameterType="com.example.demo1.pojo.RoleMenu" >
+    select 1 from rolemenu where
+    <where>
+      1 = 1
+      <if test="id != null"> and id = #{id,jdbcType=INTEGER}</if>
+      <if test="roleId != null"> and roleId = #{roleId,jdbcType=INTEGER}</if>
+      <if test="menuId != null"> and menuId = #{menuId,jdbcType=INTEGER}</if>
+    </where>
+    limit 1
+  </select>
+
+  <delete id="deleteRoleMenu" parameterType="java.lang.Integer">
+    delete from rolemenu where user.id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteByRoleIdAndMenuIds">
+    delete from rolemenu
+    where roleId = #{roleId,jdbcType=INTEGER} and menuId in <foreach collection="menuIds" item="item" open="(" close=")" separator=",">#{item}</foreach>
+  </delete>
+
+  <delete id="deleteByRoleId">
+    delete from rolemenu
+    where roleId in <foreach collection="ids" item="item" open="(" close=")" separator=",">#{item}</foreach>
+  </delete>
+
+  <insert id="saveRoleMenu">
+    insert into rolemenu (roleId,menuId)
+    values
+    <foreach collection="menuIds" item="item" separator=",">
+      (#{roleId,jdbcType=INTEGER},#{item})
+    </foreach>
+  </insert>
+</mapper>

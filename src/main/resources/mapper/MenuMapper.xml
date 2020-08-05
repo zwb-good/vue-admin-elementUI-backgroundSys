@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo1.dao.MenuMapper" >
+  <resultMap id="BaseResultMap" type="com.example.demo1.pojo.Menu" >
+    <id column="menuId" property="id" jdbcType="INTEGER" />
+    <result column="menuTitle" property="title" jdbcType="VARCHAR" />
+    <result column="menuParentId" property="parentId" jdbcType="INTEGER" />
+    <result column="menuType" property="type" jdbcType="INTEGER" />
+    <result column="menuMark" property="mark" jdbcType="VARCHAR" />
+    <result column="menuComponent" property="component" jdbcType="VARCHAR" />
+    <result column="menuIcon" property="icon" jdbcType="VARCHAR" />
+    <result column="menuIndex" property="index" jdbcType="INTEGER" />
+    <result column="menuState" property="state" jdbcType="INTEGER" />
+    <result column="menuPath" property="path" jdbcType="VARCHAR" />
+    <result column="menuName" property="name" jdbcType="VARCHAR" />
+    <result column="parentMenuTitle" property="parentTitle" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+  select
+    menu.id AS menuId,
+    menu.title AS menuTitle,
+    menu.parentId AS menuParentId,
+    menu.type AS menuType,
+    menu.mark AS menuMark,
+    menu.component AS menuComponent,
+    menu.icon AS menuIcon,
+    menu.index AS menuIndex,
+    menu.state AS menuState,
+    menu.path AS menuPath,
+    menu.name AS menuName,
+    parentMenu.title AS parentMenuTitle
+  from menu
+  left join menu parentMenu on parentMenu.id = menu.parentId
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    <include refid="Base_Column_List" />
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectMenu" resultMap="BaseResultMap" parameterType="com.example.demo1.vo.MenuVO" >
+    <include refid="Base_Column_List" />
+    <where>
+      1 = 1
+      <if test="id != null"> and menu.id = #{id,jdbcType=INTEGER}</if>
+      <if test="title != null"> and menu.title like concat('%',#{title},'%')</if>
+      <if test="state != null"> and menu.state = #{state,jdbcType=INTEGER}</if>
+      <if test="type != null"> and menu.type = #{type,jdbcType=INTEGER}</if>
+      <if test="noFunctionMenu == true"> and menu.type in (1,2)</if>
+    </where>
+    order by menu.parentId asc,menu.`index` asc
+    <if test="recordIndex !=null"> limit #{recordIndex},#{pageSize}</if>
+  </select>
+
+  <select id="countMenu" resultType="java.lang.Integer" parameterType="com.example.demo1.vo.MenuVO" >
+    select count(menu.id) from menu
+    <where>
+      1 = 1
+      <if test="id != null"> and menu.id = #{id,jdbcType=INTEGER}</if>
+      <if test="title != null"> and menu.title like concat('%',#{title},'%')</if>
+      <if test="state != null"> and menu.state = #{state,jdbcType=INTEGER}</if>
+      <if test="type != null"> and menu.type = #{type,jdbcType=INTEGER}</if>
+      <if test="noFunctionMenu == true"> and menu.type in (1,2)</if>
+    </where>
+  </select>
+
+  <select id="selectMenuByRoles" resultMap="BaseResultMap">
+    <include refid="Base_Column_List" />
+    <where>
+      menu.type in (1,2) and
+      menu.id in
+        (select distinct rolemenu.menuId from rolemenu where
+          rolemenu.roleId in
+            <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
+              #{item}
+            </foreach>
+        )
+    </where>
+    order by menu.parentId asc,menu.`index` asc
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from menu
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <!--<insert id="saveMenu" parameterType="com.example.demo1.pojo.Menu" >
+    insert into menu (id, title, parentId, `type`, mark, compoent, icon, `index`)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER},
+          #{type,jdbcType=INTEGER}, #{mark,jdbcType=VARCHAR}, #{compoent,jdbcType=VARCHAR},
+          #{icon,jdbcType=VARCHAR}, #{index,jdbcType=INTEGER})
+  </insert>-->
+
+  <insert id="saveMenu" parameterType="com.example.demo1.pojo.Menu" >
+    insert into menu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="parentId != null" >
+        parentId,
+      </if>
+      <if test="type != null" >
+        `type`,
+      </if>
+      <if test="mark != null" >
+        mark,
+      </if>
+      <if test="component != null" >
+        component,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="index != null" >
+        `index`,
+      </if>
+      <if test="path != null" >
+        path,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="mark != null" >
+        #{mark,jdbcType=VARCHAR},
+      </if>
+      <if test="component != null" >
+        #{component,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="index != null" >
+        #{index,jdbcType=INTEGER},
+      </if>
+      <if test="path != null" >
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateMenu" parameterType="com.example.demo1.pojo.Menu" >
+    update menu
+    <set>
+      <if test="title != null"> title = #{title,jdbcType=VARCHAR},</if>
+      <if test="parentId != null"> parentId = #{parentId,jdbcType=INTEGER},</if>
+      <if test="type != null"> `type` = #{type,jdbcType=INTEGER},</if>
+      <if test="mark != null"> mark = #{mark,jdbcType=VARCHAR},</if>
+      <if test="component != null"> component = #{component,jdbcType=VARCHAR},</if>
+      <if test="icon != null"> icon = #{icon,jdbcType=VARCHAR},</if>
+      <if test="index != null"> `index` = #{index,jdbcType=INTEGER},</if>
+      <if test="state != null"> state = #{state,jdbcType=INTEGER},</if>
+      <if test="path != null"> path = #{path,jdbcType=VARCHAR},</if>
+      <if test="name != null"> `name` = #{name,jdbcType=VARCHAR},</if>
+    </set>
+    <where>
+      menu.id = #{id,jdbcType=INTEGER}
+    </where>
+  </update>
+
+  <select id="selectButton" resultMap="BaseResultMap">
+    select
+    sMenu.mark AS menuMark
+    from menu pMenu left join menu sMenu on pMenu.id = sMenu.parentId and sMenu.type = 3
+    where pMenu.path = #{path,jdbcType=VARCHAR}
+    and sMenu.id in (SELECT distinct menuId FROM rolemenu WHERE roleId in
+    <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
+      #{item}
+    </foreach>)
+  </select>
+
+  <delete id="deleteMenu">
+    delete from menu where menu.id in
+    <foreach collection="ids" item="item" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
+  </delete>
+</mapper>

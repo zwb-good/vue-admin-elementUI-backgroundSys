@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo1.dao.UserRoleMapper">
+    <resultMap id="BaseResultMap" type="com.example.demo1.pojo.UserRole">
+        <id column="userroleId" jdbcType="INTEGER" property="id" />
+        <result column="userroleRoleId" jdbcType="INTEGER" property="roleId" />
+        <result column="userroleUserId" jdbcType="INTEGER" property="userId" />
+        <result column="userroleEffectiveDate" jdbcType="DATE" property="effectiveDate" />
+        <result column="userroleExpirationDate" jdbcType="DATE" property="expirationDate" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    select
+      userrole.id AS userroleId,
+      userrole.roleId AS userroleRoleId,
+      userrole.userId AS userroleUserId,
+      userrole.effectiveDate AS userroleEffectiveDate,
+      userrole.expirationDate AS userroleExpirationDate,
+      userrole.isDel AS userroleIsDel
+    from userrole
+  </sql>
+
+    <select id="selectUserRole" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        <include refid="Base_Column_List" />
+        <where>
+            1 = 1
+            <if test="userId != null"> and userrole.userId = #{userId,jdbcType=INTEGER}</if>
+        </where>
+    </select>
+
+
+    <select id="userRoleSelectExist">
+        select 1 from userrole
+        <where>
+            1 = 1
+            <if test="roleId != null"> and userrole.roleId = #{roleId,jdbcType="INTEGER"}</if>
+            <if test="userId != null"> and userrole.userId = #{userId,jdbcType="INTEGER"}</if>
+        </where>
+        limit 1
+    </select>
+
+    <insert id="saveUserRole">
+        insert into userrole (roleId,userId,effectiveDate,expirationDate)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},#{userId,jdbcType=INTEGER},#{item.effectiveDate,jdbcType=DATE},#{item.expirationDate,jdbcType=DATE})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByRoleIdAndUserId">
+        delete from userrole
+        where
+        userrole.userId = #{userId,jdbcType=INTEGER}
+        <if test="roleIds != null">
+            and userrole.roleId in
+            <foreach collection="roleIds" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+
+    <delete id="deleteByUserId">
+        delete from userrole
+        where
+        userrole.userId in
+        <foreach collection="userIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateUserRole">
+        <foreach collection="list" item="item">
+        update userrole
+        <set>
+            <if test="item.effectiveDate != null">
+                userrole.effectiveDate = #{item.effectiveDate,jdbcType=DATE},
+            </if>
+            <if test="item.expirationDate != null">
+                userrole.expirationDate = #{item.expirationDate,jdbcType=DATE},
+            </if>
+        </set>
+        where userrole.roleId = #{item.id,jdbcType=INTEGER} and userrole.userId = #{userId,jdbcType=INTEGER};
+        </foreach>
+    </update>
+</mapper>

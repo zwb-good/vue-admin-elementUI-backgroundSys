@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>Dashboard Template for Bootstrap</title>
+		<!-- Bootstrap core CSS -->
+		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+		<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
+		<!-- Custom styles for this template -->
+		<link th:href="@{/css/dashboard.css}" rel="stylesheet">
+		<style type="text/css">
+			/* Chart.js */
+			
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			.chartjs-render-monitor {
+				-webkit-animation: chartjs-render-animation 0.001s;
+				animation: chartjs-render-animation 0.001s;
+			}
+		</style>
+	</head>
+
+	<body>
+	<!--顶部导航栏-->
+	<div th:replace="~{commons/commons::topbar}"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+				<!--侧边栏-->
+				<div th:replace="~{commons/commons::sidebar}"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+						<div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+							<div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+						</div>
+						<div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+							<div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+						</div>
+					</div>
+					<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+						<h1 class="h2">Dashboard</h1>
+						<div class="btn-toolbar mb-2 mb-md-0">
+							<div class="btn-group mr-2">
+								<button class="btn btn-sm btn-outline-secondary">Share</button>
+								<button class="btn btn-sm btn-outline-secondary">Export</button>
+							</div>
+							<button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                This week
+              </button>
+						</div>
+					</div>
+
+					﻿<!--数据表格-->
+					﻿<div class="selectTopic-data col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<table id="tbl_selectTopic">
+					</table>
+				</div>
+
+					
+				</main>
+			</div>
+		</div>
+
+		<!-- Bootstrap core JavaScript
+    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}" ></script>
+		<script type="text/javascript" th:src="@{/js/popper.min.js}" ></script>
+		<script type="text/javascript" th:src="@{/js/bootstrap.min.js}" ></script>
+
+		<!-- Icons -->
+		<script type="text/javascript" th:src="@{/js/feather.min.js}" ></script>
+	<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+	<!-- Latest compiled and minified Locales -->
+	<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/locale/bootstrap-table-zh-CN.min.js"></script>
+		<script>
+			feather.replace()
+		</script>
+
+		<!-- Graphs -->
+		<script type="text/javascript" th:src="@{/js/Chart.min.js}" ></script>
+		<script>
+			var data = [{
+
+          "title":"10001",
+
+          "employeeName":"小米6",
+
+          "engageTitle":"2499",
+
+          "guiderteamName":"mi6.jpg",
+					"situation":"666"
+
+      },
+
+          {
+
+              "title":"10002",
+
+              "employeeName":"小米笔记本",
+
+              "engageTitle":"3999",
+
+              "guiderteamName":"note.jpg",
+              "situation":"666"
+
+          },
+
+          {
+
+              "title":"10003",
+
+              "employeeName":"小米6",
+
+              "engageTitle":"2499",
+
+              "guiderteamName":"mi6.jpg",
+              "situation":"666"
+
+          }]
+      $(document).ready(function(){
+          $("#tbl_selectTopic").bootstrapTable({
+              /*url:queryURL, //访问接口
+              queryParams: function(params){ //参数
+                  var condition = "topic.year = "+graduactionYear;
+                  //选择框参数
+                  var guiderTeamId=$("#guiderTeam_name").val();
+                  if(guiderTeamId != "" && guiderTeamId != null){
+                      condition += " and guiderTeam.id = "+guiderTeamId;
+                  }
+                  //文本框输入参数
+                  var searchInput = $("#searchInput").val();
+                  if(searchInput != "" && searchInput != null && searchInput != undefined){
+                      condition += "  and (topic.keyword like '%"+searchInput+"%' or topic.title like '%"+searchInput+"%'  ";
+                      condition += " or empa.name like '%"+searchInput+"%') ";
+                  }
+                  //排序
+                  var orderBy = "guiderteam_id,convert(empa_name using gbk) desc"; //按照团队ID和指导教师名字排序
+                  return {"condition": condition,"orderBy":orderBy}
+              },*/
+              data: data,
+              striped: true,//隔行显色
+              pagination: true,//开启分页
+              pageSize: 50,
+              theadClasses: "thead-blue",//表头颜色，自定义的css
+              columns: [
+                  {
+
+                      checkbox: true
+                  },
+                  {
+                      field: 'title',
+                      title: '课题名称',
+                      align: 'center'
+                  },
+                  {
+                      field: 'employeeName',
+                      title: '指导教师',
+                      align: 'center'
+                  },
+                  {
+                      field: 'engageTitle',
+                      title: '职称',
+                      align: 'center'
+                  },
+                  {
+                      field: 'education',
+                      title: '学历学位',
+                      align: 'center'
+                  },
+                  {
+                      field: 'guiderteamName',
+                      title: '指导团队',
+                      align: 'center'
+                  },
+                  {
+                      field: 'situation',
+                      title: '操作',
+                      align: 'center'
+                  },
+              ],
+              formatNoMatches : function() { //无数据时的提示
+                  return '没有符合条件的课题!';
+              },
+              //设置行背景颜色
+              rowStyle:function(row, index) {
+                  if(row.studentName != null && row.studentName != ""){
+                      return {classes: "danger"};
+                  }else{
+                      return {classes: "default"};
+                  }
+              }
+          })
+      })
+		</script>
+
+	</body>
+
+</html>
